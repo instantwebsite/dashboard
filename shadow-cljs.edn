@@ -1,0 +1,24 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src/dev"
+  "src/main"
+  "src/test"]
+
+ :dependencies
+ [[reagent "1.0.0-alpha2"]
+  [bidi "2.1.6"]
+  [cider/cider-nrepl "0.25.3"]
+  [cljs-http "0.1.46"]
+  [tick "0.4.26-alpha"]]
+
+ :dev-http {8081 "public"}
+ 
+ :nrepl {:port 8082}
+
+ :builds
+ {:frontend
+  {:target :browser
+   ;; :module-hash-names true
+   ;; :build-options {:manifest-name "manifest.edn"}
+   :modules {:main {:init-fn app/init}}}}}
+

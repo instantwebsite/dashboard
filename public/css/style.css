@@ -1,0 +1,17 @@
+h1, h2, h3, .title {
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+}
+
+p {
+  font-family: Inter, sans-serif;
+  font-weight: 300;
+}
+
+-webkit-input-placeholder {
+  font-family: Inter, sans-serif;
+}
+
+button, a, input, .block {
+  font-family: Inter, sans-serif;
+}

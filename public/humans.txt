@@ -1,0 +1,12 @@
+Hello!
+
+Yes, there is in fact a human behind this project.
+
+It's me, Victor! You can find me on Twitter (@VictorBjelkholm) or send me an email, via humans@victor.earth
+
+I'm the person who built InstantWebsite. It's made with Clojure, ClojureScript and lots of other nice little technologies. If you want to know more, please do contact me, I love talking with people about the projects I'm building, and I'd love to hear if you have any ideas too!
+
+Even if you don't contact me, thanks for stopping by, I hope you have a lovely week so far!
+
+Sincerely,
+Victor
