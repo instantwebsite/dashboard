@@ -9,7 +9,7 @@
     [router :refer [ev-go-to-page
                     go-to-page]]
     [components.table :refer [$table $table-row]]
-    [page-component :refer [fetch-resource]]
+    [page-component :refer [component fetch-resource]]
     [config :refer [config]]
     ;;
     [clojure.pprint :refer [pprint]]))
@@ -90,14 +90,34 @@
                                            (.log js/console err))))}
             "Delete"]]]])))
 
-(defn $websites []
-  (redirect-if-no-token!)
-  (when (-> @app-state :page/websites :websites nil?)
-    (fetch-resource app-state :page/websites [:websites]))
-  [:div
-   [:div
-    (if (empty? (-> @app-state :page/websites :websites))
-      [how-to-get-websites-instructions]
-      [$table {:heads ["Name" "Pages" "Active?" ""]
-               :items (-> @app-state :page/websites :websites)
-               :row-component $website-row2}])]])
+(comment
+  (defn $websites []
+    (redirect-if-no-token!)
+    (when (-> @app-state :page/websites :websites nil?)
+      (fetch-resource app-state :page/websites [:websites]))
+    [:div
+     [:div
+      (if (empty? (-> @app-state :page/websites :websites))
+        [how-to-get-websites-instructions]
+        [$table {:heads ["Name" "Pages" "Active?" ""]
+                 :items (-> @app-state :page/websites :websites)
+                 :row-component $website-row2}])]]))
+
+(defn -$websites []
+  (if (empty? (-> @app-state :page/websites :websites))
+    [how-to-get-websites-instructions]
+    [$table {:heads ["Name" "Pages" "Active?" ""]
+             :items (-> @app-state :page/websites :websites)
+             :row-component $website-row2}]))
+
+(defn $loading []
+  [:div "Loading"])
+
+(defn $websites [{:keys []
+                  :as opts}]
+  (component
+    {:to-render [-$websites]
+     :namespace :page/websites
+     :wait-for :websites
+     :$loading $loading
+     :resources [[:websites]]}))

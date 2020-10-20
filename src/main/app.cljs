@@ -120,6 +120,12 @@
          [:div "404"]))
      (when (:debug? @app-state)
        [:div
+        [:button
+         {:onClick (fn []
+                     (let [current-page (-> @app-state :current-page)]
+                       (go-to-page app-state "/")
+                       (go-to-page app-state (-> @app-state :current-page))))}
+         "Reload current page"]
         [:h3 "App State:"]
         [:pre (with-out-str (pprint @app-state))]])]])
 

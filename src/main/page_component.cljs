@@ -18,34 +18,50 @@
    :attribute-stats "aaaaaaaaaaaaa/attribute-stats"
    :entity "aaaaaaaaaaaaa/entity/:id"})
 
-(defn fetch-resource [state namespace action]
-  (if (nil? (get resource-mapping (first action)))
-    (throw (js/Error. (str "[fetch-resource] Couldn't find action for resource " (first action))))
-    (let [resource (first action)
-          path (get resource-mapping resource)
-          id (second action)
-          full-path (str/replace path ":id" id)]
-      (get-resource (access-token state)
-                    full-path
-                    (fn [res]
-                      (swap! state assoc-in [namespace resource] res))))))
+(defn fetch-resource
+  ([state namespace action]
+   (fetch-resource state namespace action (fn [])))
+  ([state namespace action on-done]
+   (if (nil? (get resource-mapping (first action)))
+     (throw (js/Error. (str "[fetch-resource] Couldn't find action for resource " (first action))))
+     (let [resource (first action)
+           path (get resource-mapping resource)
+           id (second action)
+           full-path (str/replace path ":id" id)]
+       (get-resource (access-token state)
+                     full-path
+                     (fn [res]
+                       (swap! state assoc-in [namespace resource] res)
+                       (on-done res)))))))
 
 (comment
   (fetch-resource [:website "w3b19962dfe383bdc1347e44fbcdcc8bf"]))
 
 (defn component [{:keys [to-render
                          namespace
-                         resources]
+                         resources
+                         wait-for
+                         $loading]
                   :as opts}]
-  (r/create-class
-    {:reagent-render (fn [] to-render)
-     :component-will-unmount
-     (fn []
-       (swap! app-state assoc namespace {}))
-     :component-did-mount
-     (fn []
-       (redirect-if-no-token!)
-       (when (access-token?)
-         (swap! app-state assoc namespace {})
-         (doseq [resource resources]
-           (fetch-resource app-state namespace resource))))}))
+  (let [loaded? (r/atom (nil? wait-for))]
+    (r/create-class
+      {:reagent-render (fn []
+                         [:div
+                           (if @loaded?
+                             to-render
+                             [$loading])])
+       :component-will-unmount
+       (fn []
+         (swap! app-state assoc namespace {}))
+       :component-did-mount
+       (fn []
+         (redirect-if-no-token!)
+         (when (access-token?)
+           (swap! app-state assoc namespace {})
+           (doseq [resource resources]
+             (if (= (first resource) wait-for)
+               (fetch-resource app-state namespace resource
+                               (fn []
+                                 (println "loaded the right resource")
+                                 (reset! loaded? true)))
+               (fetch-resource app-state namespace resource)))))})))
