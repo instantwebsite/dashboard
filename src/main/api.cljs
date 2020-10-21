@@ -219,21 +219,19 @@
 
 (defn verify-domain! [id on-success]
   (swap! app-state assoc :verifying-domain? true)
-  (->
-    (.fetch
-      js/window
-      (str (:api config/config) (str "domains/" id "/verify"))
-      #js{:headers #js{"Authorization" (str "Token " (access-token app-state))}
-          :method "POST"})
-    (.then (fn [res] (.text res)))
-    (.then (fn [body]
-             (read-string body)))
-    (.then (fn [res]
-             (pprint res)
-             (swap! app-state assoc :verifying-domain? false)
-             (swap! app-state assoc :tried-verifying-domain? true)
-             (fetch-domain-if-auth id)
-             (on-success res)))))
+  (http {:path (str "domains/" id "/verify")
+         :method :post
+         :parse-fn read-string}
+        (fn [body]
+          (swap! app-state assoc :verifying-domain? false)
+          (swap! app-state assoc :tried-verifying-domain? true)
+          (fetch-domain-if-auth id)
+          (on-success body))
+        (fn [body]
+          (let [err (str body)]
+            (swap! app-state assoc :verifying-domain? false)
+            (notify! {:text err
+                      :type :failure})))))
 
 (defn create-checkout-session! [callback]
   (->

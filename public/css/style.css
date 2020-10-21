@@ -15,3 +15,11 @@ p {
 button, a, input, .block {
   font-family: Inter, sans-serif;
 }
+
+.website-list-item {
+  border: 1px solid rgba(0,0,0,0);
+}
+
+.website-list-item:hover {
+  border: 1px solid rgba(0,0,0,0.1);
+}

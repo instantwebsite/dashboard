@@ -66,8 +66,7 @@
                                         (assoc history :index index)))
                          (reverse))
              :heads ["Version" "Content-Hash" "Created At" ""]
-             :row-component $history-row}]
-    [:pre (with-out-str (cljs.pprint/pprint @app-state))]])
+             :row-component $history-row}]])
 
 (defn $website [{:keys [id]
                  :as opts}]
