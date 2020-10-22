@@ -101,9 +101,11 @@
      :method :post}))
 
 (defn get-params [opts]
-  (if (:edn opts)
-    {:edn-params (:edn opts)}
-    {}))
+  (merge
+    (if (:edn opts)
+      {:edn-params (:edn opts)}
+      {})
+    opts))
 
 (defn get-headers [opts]
   {"Authorization" (str "Token " (access-token app-state))})

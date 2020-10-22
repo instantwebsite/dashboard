@@ -6,6 +6,7 @@
     [components.text-input :refer [$text-input]]
     [state :refer [app-state]]
     [components.table :refer [$table $table-row]]
+    [api :refer [http]]
     [tick.alpha.api :as t]
     [tick.locale-en-us :as l]))
 
@@ -24,6 +25,29 @@
        "/"
        content-hash))
 
+(defn download-blob [blob filename]
+  (let [url (.createObjectURL js/window.URL blob)
+        a-tag (.createElement js/document "a")]
+    (set! (.-href a-tag) url)
+    (set! (.-download a-tag) (str filename ".zip"))
+    (.appendChild js/document.body a-tag)
+    (.click a-tag)
+    (.remove a-tag)))
+
+(defn handle-download [website-id content-hash]
+  (let [path (str "websites/"
+                  website-id
+                  "/"
+                  content-hash
+                  "/exports/html")]
+    (http {:path path
+           :method :get
+           :response-type :blob}
+          (fn [res]
+            (download-blob res content-hash))
+          (fn [res]
+            (println "download failure")))))
+
 (defn $history-row [history]
   [$table-row {:id (:crux.db/content-hash history)
                :datas [(:index history)
@@ -34,6 +58,12 @@
                           0
                           8)]
                        (format-time (:crux.db/valid-time history))
+                       (when-not (= (:index history) 0)
+                         [:a.button
+                          {:onClick #(handle-download (:website-id history)
+                                                      (:crux.db/content-hash history))
+                           :target "_blank"}
+                          "Download"])
                        (when-not (= (:index history) 0)
                          [:a.button
                           {:href (construct-visit-url (:website-id history)
@@ -65,7 +95,7 @@
                          (map-indexed (fn [index history]
                                         (assoc history :index index)))
                          (reverse))
-             :heads ["Version" "Content-Hash" "Created At" ""]
+             :heads ["Version" "Content-Hash" "Created At" "" ""]
              :row-component $history-row}]])
 
 (defn $website [{:keys [id]
