@@ -50,7 +50,7 @@
          "Documentation"]
         " if you need more help"]]]]])
 
-(defn $website-row2 [website]
+(defn $website-row [website]
   (fn [website]
     [:a.website-list-item
      {:key (:crux.db/id website)
@@ -131,37 +131,6 @@
        ;;                                 (.log js/console err))))}
        ;;  "Delete"]]]))
 
-(defn $website [{:keys [title updated-at domain pages state]}]
-  [:div
-   {:style {:background-color "rgba(246, 246, 246, 1)"
-            :color "rgba(28, 28, 28, 1)"}}
-   [:div
-    {:style {:font-family "Inter"
-             :font-weight 500
-             :font-size "18px"}}
-    title]
-   [:div updated-at]
-   [:div domain]])
-
-(comment
-  (defn $websites []
-    (redirect-if-no-token!)
-    (when (-> @app-state :page/websites :websites nil?)
-      (fetch-resource app-state :page/websites [:websites]))
-    [:div
-     ;; [$website
-     ;;  {:title "Landing Page"}
-     [:div
-      (if (empty? (-> @app-state :page/websites :websites))
-        [how-to-get-websites-instructions]
-        (map (fn [w]
-               ^{:key (:crux.db/id w)}
-               [$website-row2 w])
-             (-> @app-state :page/websites :websites)))]]))
-        ;; [$table {:heads ["Name" "Pages" "Active?" ""]
-        ;;          :items (-> @app-state :page/websites :websites)
-        ;;          :row-component $website-row2)))]]))
-
 (defn $title []
   [:div
     {:style {:font-size 36
@@ -226,13 +195,6 @@
     [how-to-get-websites-instructions]
     [:div
      {:style {:margin-top 20}}
-      ;; [$website
-      ;;  {:title "Landing Page"
-      ;;   :updated-at "2014-04-13 23:32:23"
-      ;;   :domain "beta.instantwebsite.app"
-      ;;   :pages 4
-      ;;   :state :active
-      ;;   :id "w1203123"}
      [:div
        {:style {:display "flex"
                 :justify-content "space-between"
@@ -251,7 +213,7 @@
                  "'")]
            (map (fn [w]
                   ^{:key (:crux.db/id w)}
-                  [$website-row2 w])
+                  [$website-row w])
                 websites)))]]))
             
 
