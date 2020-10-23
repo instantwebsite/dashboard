@@ -25,6 +25,7 @@
     [pages.billing-success :refer [$billing-success]]
     [pages.admin :refer [$admin]]
     [pages.admin-edit :refer [$admin-edit]]
+    [scrutinize.app :as scrutinize]
     [ls :as ls]
     [auth :refer [redirect-if-no-token!
                   get-access-token
@@ -55,7 +56,9 @@
    :billing/cancel $billing-cancel
    :billing/success $billing-success
    :cameleon-deputies $admin
-   :cameleon-deputies-edit $admin-edit})
+   :cameleon-deputies-edit $admin-edit
+   :scrutinize/list scrutinize/$list
+   :scrutinize/show scrutinize/$show})
 
 (defn drop-index [col idx]
   (filter identity (map-indexed #(if (not= %1 idx) %2) col)))

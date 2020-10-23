@@ -54,39 +54,23 @@
 
 (defn $website-row [website]
   (fn [website]
-    [:a.website-list-item.iw-box
+    [:a.iw-box.iw-list-item
      {:key (:crux.db/id website)
       :href (str "/websites/" (:crux.db/id website))
       :onClick (fn [ev]
                  (.preventDefault ev)
                  (when (.-target ev) (.-currentTarget ev)
-                   (go-to-page app-state (str "/websites/" (:crux.db/id website)))))
-      :style {:display "flex"
-              :justify-content "space-between"
-              :align-items "center"
-              :margin 15
-              :margin-left 0}}
-     [:div
-      {:style {:font-weight 500
-               :font-size 18
-               :width "20%"}}
+                   (go-to-page app-state (str "/websites/" (:crux.db/id website)))))}
+     [:div.iw-list-item-title
       (:website/name website)]
-     [:div
-      {:style {:width "20%"
-               :font-weight 400}}
-      [:div
-       {:style {:font-size 10
-                :color "rgba(28, 28, 28, 1)"}}
+     [:div.iw-list-item-timestamp
+      [:div.iw-list-item-timestamp-ago
        "15 minutes ago"]
-      [:div
-        {:style {:font-size 9
-                 :color "rgba(154, 154, 154, 1)"}}
+      [:div.iw-list-item-timestamp-full
         "("
         (simple-datetime (:website/updated-at website))
         ")"]]
-     [:div
-      {:style {:font-size 10
-               :width "20%"}}
+     [:div.iw-list-item-related
       (if-let [domain (:website/domain website)]
         [:span
           {:style {:font-weight 500}}
@@ -94,8 +78,7 @@
         [:span
           {:style {:font-weight 400}}
           "No Domain Connected"])]
-     [:div
-      {:style {:font-size 10}}
+     [:div.iw-list-item-counter
       (let [c (count (:website/pages website))]
         (condp = c
           0 "No pages"
@@ -119,18 +102,6 @@
          :onClick #(.stopPropagation %)
          :target "_blank"}
         "Visit"]]]))
-       ;; [:a.button.is-danger
-       ;;  {:onClick (fn [ev]
-       ;;              (.stopPropagation ev)
-       ;;              (delete-website! (:crux.db/id website)
-       ;;                               (fn [res]
-       ;;                                 (fetch-resource app-state :page/websites [:websites])
-       ;;                                 (notify! {:text "Website deleted!"
-       ;;                                           :type :warn}))
-       ;;                               (fn [err]
-       ;;                                 (println "err")
-       ;;                                 (.log js/console err))))}
-       ;;  "Delete"]]]))
 
 (defn $title []
   [:div.iw-title
@@ -170,7 +141,7 @@
                   ^{:key (:crux.db/id w)}
                   [$website-row w])
                 websites)))]]))
-            
+
 
 (defn $loading []
   [:div

@@ -1,6 +1,7 @@
 ;; shadow-cljs configuration
 {:source-paths
- ["src/main"]
+ ["src/main"
+  "src/scrutinize"]
 
  :dependencies
  [[reagent "1.0.0-alpha2"]

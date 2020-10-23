@@ -46,6 +46,44 @@ a {
   color: rgba(28, 28, 28, 1);
 }
 
+.iw-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px;
+  margin-left: 0px;
+}
+
+.iw-list-item-title {
+  font-weight: 500;
+  font-size: 18px;
+  width: 20%;
+}
+
+.iw-list-item-timestamp {
+  width: 20%;
+  font-weight: 400;
+}
+
+.iw-list-item-timestamp-ago {
+  font-size: 10px;
+  color: rgba(28, 28, 28, 1);
+}
+
+.iw-list-item-timestamp-full {
+  font-size: 9px;
+  color: rgba(154, 154, 154, 1);
+}
+
+.iw-list-item-related {
+  font-size: 10px;
+  width: 20%;
+}
+
+.iw-list-item-counter {
+  font-size: 10px;
+}
+
 .page-list-item:hover {
   text-decoration: underline;
 }

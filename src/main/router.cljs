@@ -1,5 +1,6 @@
 (ns router
   (:require
+    [clojure.pprint :refer [pprint]]
     [bidi.bidi :as bidi]))
 
 (def routes ["/" {"" :home
@@ -14,7 +15,9 @@
                   "pricing/cancel" :billing/cancel
                   "pricing/success" :billing/success
                   "cameleon-deputies" :cameleon-deputies
-                  ["cameleon-deputies/" :id] :cameleon-deputies-edit}])
+                  ["cameleon-deputies/" :id] :cameleon-deputies-edit
+                   "scrutinize"       :scrutinize/list
+                  ["scrutinize/" [#".*" :selector]] :scrutinize/show}])
 
 (defn get-route [handlers current-page]
   (let [k (bidi/match-route routes current-page)]

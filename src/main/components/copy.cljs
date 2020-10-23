@@ -11,3 +11,9 @@
                    v)
                  #(notify! {:text "Copied to clipboard!"})))}
    "Copy"])
+
+(def cases
+  [["string" "Hello World"]
+   ["nil" nil]
+   ["bool" true]
+   ["keyword" :hello]])
