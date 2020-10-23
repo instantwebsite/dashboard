@@ -141,7 +141,7 @@
   (swap! app-state
          assoc-in
          [:page/websites :search-term]
-         (-> ev .-target .-value .trim)))
+         (-> ev .-target .-value)))
 
 (defn -$websites []
   (if (empty? (-> @app-state :page/websites :websites))
@@ -159,6 +159,7 @@
      [:div
        (let [websites (filter-by-term
                         (-> @app-state :page/websites :websites)
+                        [:website/name :website/domain]
                         (-> @app-state :page/websites :search-term))]
          (if (empty? websites)
            [:div

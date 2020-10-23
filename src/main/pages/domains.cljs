@@ -37,7 +37,7 @@
   (swap! app-state
          assoc-in
          [:page/domains :search-term]
-         (-> ev .-target .-value .trim)))
+         (-> ev .-target .-value)))
 
 (defn -$domains [{:keys [resources]}]
   (let [domains (:domains resources)]
@@ -56,7 +56,10 @@
                       "Website Version"
                       "Auto Updating?"
                       "Verified?"]
-              :items domains
+              :items (filter-by-term
+                       domains
+                       [:domain/hostname]
+                       (-> @app-state :page/domains :search-term))
               :row-component $domain-row
               :new-url "/domains/new"
               :new-text "Create new domain"

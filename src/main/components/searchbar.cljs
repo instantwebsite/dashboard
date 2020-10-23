@@ -17,34 +17,14 @@
     :value value
     :type "text"}])
 
-(defn filter-by-term [websites term]
+(defn filter-by-term [websites ks term]
   (filter (fn [w]
-            (let [name (lower-case (or (:website/name w) ""))
-                  domain (lower-case (or (:website/domain w) ""))
+            (let [matchers (map #(lower-case (or (% w) ""))
+                                ks)
                   term-lc (lower-case (or term ""))]
               (if term
-                (or (includes? name term-lc)
-                    (includes? domain term-lc))
+                (some (fn [i]
+                        (includes? i term-lc))
+                      matchers)
                 true)))
           websites))
-
-(comment
-  (def websites [{:website/name "Landing Page"
-                  :website/domain nil}
-                 {:website/name "Exit page"
-                  :website/domain "exit.instantwebsite.app"}])
-  (count
-    (filter-by-term websites nil))
-  ;; => 2
-  (count
-    (filter-by-term websites ""))
-  ;; => 2
-  (count
-    (filter-by-term websites "Landing"))
-  ;; => 1
-  (count
-    (filter-by-term websites "page"))
-  ;; => 2
-  (count
-    (filter-by-term websites "instantwebsite")))
-  ;; => 1
