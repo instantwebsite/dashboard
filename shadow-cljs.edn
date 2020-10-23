@@ -23,5 +23,8 @@
   {:target :browser-test
    :test-dir "resources/public/js/test"
    :devtools {:http-port 8021
-              :http-root "resources/public/js/test"}}}}
+              :http-root "resources/public/js/test"}}
+  :ci
+  {:target :karma
+   :output-to  "target/ci.js"}}}
 
