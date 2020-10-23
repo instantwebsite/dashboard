@@ -75,13 +75,13 @@
 (def plans
   {:free {:name "Free Beta"
           :price "€0"
-          :whitelabeled "No"
+          :banner "Yes"
           :export "None"
-          :websites 3
+          :websites 10
           :protect "None"}
    :pro {:name "Pro Beta"
          :price "€10"
-         :whitelabeled "Yes"
+         :banner "No"
          :export ".zip archive"
          :websites "Unlimited"
          :protect "Password"}})
@@ -109,11 +109,11 @@
          " / month"]]
       [:div.columns.is-centered.is-vcentered
        [:div.column.has-text-right
-        "White Labeled"
+        "\"Created By\" banner"
         [$help "If every website created has a tiny little banner in the bottom left" class-mod]]
        [:div.column
         [:div.title.is-4
-          (:whitelabeled plan)]]]
+          (:banner plan)]]]
       [:div.columns.is-centered.is-vcentered
        [:div.column.has-text-right
         "Max Websites"
@@ -121,13 +121,13 @@
        [:div.column
         [:div.title.is-4
           (:websites plan)]]]
-      ;; [:div.columns.is-centered.is-vcentered
-      ;;  [:div.column.has-text-right
-      ;;   "Export (soon)"
-      ;;   [$help "If the builds of the websites can be exported from InstantWebsite. We're still working on this feature. If you need it right away, contact us" class-mod]]
-      ;;  [:div.column
-      ;;   [:div.title.is-4
-      ;;     (:export plan)]]]
+      [:div.columns.is-centered.is-vcentered
+       [:div.column.has-text-right
+        "Export"
+        [$help "If uploaded websites can be exported from InstantWebsite." class-mod]]
+       [:div.column
+        [:div.title.is-4
+          (:export plan)]]]
       ;; [:div.columns.is-centered.is-vcentered
       ;;  [:div.column.has-text-right
       ;;   "Protection (soon)"
@@ -164,6 +164,6 @@
 
 (defn $billing []
   (component
-    {:to-render [-$billing]
+    {:to-render -$billing
      :namespace :page/profile
      :resources [[:profile]]}))

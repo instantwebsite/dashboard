@@ -24,7 +24,7 @@
               :title title
               :onKeyUp (fn [ev]
                          (when (= (.-keyCode ev) 13)
-                           (onEnter (-> ev .-target .-value .trim))))
+                           (onEnter (-> ev .-target .-value))))
               :onChange (fn [ev]
-                          (onChange (-> ev .-target .-value .trim)))}]}])
+                          (onChange (-> ev .-target .-value)))}]}])
 

@@ -68,6 +68,6 @@
 
 (defn $profile []
   (component
-    {:to-render [-$profile]
+    {:to-render -$profile
      :namespace :page/profile
      :resources [[:profile]]}))

@@ -67,6 +67,6 @@
                     :as opts}]
   ^{:key id}
   [component
-    {:to-render [-$admin-edit opts]
+    {:to-render -$admin-edit
      :namespace :page/admin-edit
      :resources [[:entity id]]}])

@@ -37,7 +37,7 @@
     :aria-label "main navigation"}
    [:div.navbar-start
      [:div.navbar-item
-      {:onClick #(go-to-page app-state "/")
+      {:onClick #(go-to-page app-state "/websites")
        :style {:cursor "pointer"
                :font-weight "bold"}}
       [:img.image

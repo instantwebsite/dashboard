@@ -3,6 +3,9 @@
     [reagent.core :as r]
     [auth :refer [redirect-if-no-token!]]
     [api :refer [fetch-domains-if-auth]]
+    [page-component :refer [component]]
+    [components.searchbar :refer [$searchbar
+                                  filter-by-term]]
     [state :refer [app-state]]
     [components.table :refer [$table $table-row]]))
 
@@ -25,28 +28,43 @@
                          [:span.tag.is-warning
                           "Missing Verification"])]}])
 
-(defn -$domains []
-  [:div
-   [$table {:heads ["Domain"
-                    "Connected Website"
-                    "Website Version"
-                    "Auto Updating?"
-                    "Verified?"]
-            :items (:domains @app-state)
-            :row-component $domain-row
-            :new-url "/domains/new"
-            :new-text "Create new domain"
-            :empty-text "You have no domains."}]])
+(defn $title []
+  [:div.iw-title
+    {:style {:margin-left 15}}
+    "Your Domains"])
 
-(defn $domains []
-  (r/create-class
-    {:reagent-render
-     (fn []
-       [-$domains])
-     :component-did-mount
-     (fn []
-       (redirect-if-no-token!)
-       (fetch-domains-if-auth))
-     :component-will-unmount
-     (fn []
-       (swap! app-state assoc :domains #{}))}))
+(defn onSearchChange [ev]
+  (swap! app-state
+         assoc-in
+         [:page/domains :search-term]
+         (-> ev .-target .-value .trim)))
+
+(defn -$domains [{:keys [resources]}]
+  (let [domains (:domains resources)]
+    [:div
+     [:div
+       {:style {:display "flex"
+                :justify-content "space-between"
+                :align-items "center"
+                :margin-bottom 30}}
+       [$title]
+       [$searchbar {:onChange onSearchChange
+                    :placeholder "Search for domains here"
+                    :value (-> @app-state :page/domains :search-term)}]]
+     [$table {:heads ["Domain"
+                      "Connected Website"
+                      "Website Version"
+                      "Auto Updating?"
+                      "Verified?"]
+              :items domains
+              :row-component $domain-row
+              :new-url "/domains/new"
+              :new-text "Create new domain"
+              :empty-text "You have no domains."}]]))
+
+(defn $domains [opts]
+  (component
+    {:to-render -$domains
+     :namespace :page/domains
+     :wait-for :domains
+     :resources [[:domains]]}))

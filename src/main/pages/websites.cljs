@@ -10,6 +10,8 @@
     [router :refer [ev-go-to-page
                     go-to-page]]
     [components.table :refer [$table $table-row]]
+    [components.searchbar :refer [$searchbar
+                                  filter-by-term]]
     [page-component :refer [component fetch-resource]]
     [config :refer [config]]
     [js-time :refer [simple-datetime]]
@@ -52,7 +54,7 @@
 
 (defn $website-row [website]
   (fn [website]
-    [:a.website-list-item
+    [:a.website-list-item.iw-box
      {:key (:crux.db/id website)
       :href (str "/websites/" (:crux.db/id website))
       :onClick (fn [ev]
@@ -63,11 +65,7 @@
               :justify-content "space-between"
               :align-items "center"
               :margin 15
-              :margin-left 0
-              :padding 15
-              :border-radius 3
-              :background-color "rgba(246, 246, 246, 1)"
-              :color "rgba(28, 28, 28, 1)"}}
+              :margin-left 0}}
      [:div
       {:style {:font-weight 500
                :font-size 18
@@ -88,11 +86,14 @@
         ")"]]
      [:div
       {:style {:font-size 10
-               :font-weight "bolder"
                :width "20%"}}
       (if-let [domain (:website/domain website)]
-        domain
-        "No Domain Connected")]
+        [:span
+          {:style {:font-weight 500}}
+          domain]
+        [:span
+          {:style {:font-weight 400}}
+          "No Domain Connected"])]
      [:div
       {:style {:font-size 10}}
       (let [c (count (:website/pages website))]
@@ -132,76 +133,29 @@
        ;;  "Delete"]]]))
 
 (defn $title []
-  [:div
-    {:style {:font-size 36
-             :font-weight 300
-             :color "rgba(28, 28, 28, 1)"
-             :margin-left 15}}
+  [:div.iw-title
+    {:style {:margin-left 15}}
     "Your Websites"])
 
-(defn $searchbar []
-  [:input
-   {:style {:background "#FFFFFF"
-            :border  "1px solid #C7C7C7"
-            :box-sizing "border-box"
-            :box-shadow "1px 1px 1px rgba(0, 0, 0, 0.07)"
-            :border-radius "3px"
-            :padding "5px"
-            :font-size 14
-            :margin-right 15}
-    :placeholder "Search for websites here"
-    :onChange (fn [ev]
-                (swap! app-state
-                       assoc-in
-                       [:page/websites :search-term]
-                       (-> ev .-target .-value .trim)))
-    :value (-> @app-state :page/websites :search-term)
-    :type "text"}])
-
-(defn filter-by-term [websites term]
-  (filter (fn [w]
-            (let [name (lower-case (or (:website/name w) ""))
-                  domain (lower-case (or (:website/domain w) ""))
-                  term-lc (lower-case (or term ""))]
-              (if term
-                (or (includes? name term-lc)
-                    (includes? domain term-lc))
-                true)))
-          websites))
-
-(comment
-  (def websites [{:website/name "Landing Page"
-                  :website/domain nil}
-                 {:website/name "Exit page"
-                  :website/domain "exit.instantwebsite.app"}])
-  (count
-    (filter-by-term websites nil))
-  ;; => 2
-  (count
-    (filter-by-term websites ""))
-  ;; => 2
-  (count
-    (filter-by-term websites "Landing"))
-  ;; => 1
-  (count
-    (filter-by-term websites "page"))
-  ;; => 2
-  (count
-    (filter-by-term websites "instantwebsite")))
-  ;; => 1
+(defn onSearchChange [ev]
+  (swap! app-state
+         assoc-in
+         [:page/websites :search-term]
+         (-> ev .-target .-value .trim)))
 
 (defn -$websites []
   (if (empty? (-> @app-state :page/websites :websites))
     [how-to-get-websites-instructions]
     [:div
-     {:style {:margin-top 20}}
      [:div
        {:style {:display "flex"
                 :justify-content "space-between"
                 :align-items "center"
                 :margin-bottom 30}}
        [$title]
-       [$searchbar]]
+       [$searchbar {:onChange onSearchChange
+                    :placeholder "Search for websites here"
+                    :value (-> @app-state :page/websites :search-term)}]]
      [:div
        (let [websites (filter-by-term
                         (-> @app-state :page/websites :websites)
@@ -225,10 +179,9 @@
     {:style {:text-align "center"}}
     "Loading"]])
 
-(defn $websites [{:keys []
-                  :as opts}]
+(defn $websites [opts]
   (component
-    {:to-render [-$websites]
+    {:to-render -$websites
      :namespace :page/websites
      :wait-for :websites
      :$loading $loading

@@ -1,3 +1,8 @@
+html, body {
+  font-family: Inter, sans-serif;
+  font-weight: 300;
+}
+
 h1, h2, h3, .title {
   font-family: Inter, sans-serif;
   font-weight: 600;
@@ -16,10 +21,37 @@ button, a, input, .block {
   font-family: Inter, sans-serif;
 }
 
+a {
+  color: rgba(53, 194, 225, 1);
+}
+
 .website-list-item {
   border: 1px solid rgba(0,0,0,0);
 }
 
 .website-list-item:hover {
   border: 1px solid rgba(0,0,0,0.1);
+}
+
+.iw-box {
+  padding: 15px;
+  border-radius: 3px;
+  background-color: rgba(246, 246, 246, 1);
+  color: rgba(28, 28, 28, 1);
+}
+
+.iw-title {
+  font-size: 36px;
+  font-weight: 300;
+  color: rgba(28, 28, 28, 1);
+}
+
+.page-list-item:hover {
+  text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background-color: #444;
+  }
 }

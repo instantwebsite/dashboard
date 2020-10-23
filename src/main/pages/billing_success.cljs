@@ -52,6 +52,6 @@
 
 (defn $billing-success []
   (component
-    {:to-render [-$billing-success]
+    {:to-render -$billing-success
      :namespace :page/billing-success
      :resources [[:profile]]}))

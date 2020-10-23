@@ -307,7 +307,7 @@
 
 (defn $admin []
   (component
-    {:to-render [$container]
+    {:to-render $container
      :namespace :page/admin
      :resources []}));; [:everything]
                  ;; [:tx-logs]

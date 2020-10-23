@@ -110,8 +110,6 @@
 
 ;; TODO move to own component
 (defn $select [{:keys [label options selected onChange help]}]
-  (println "selected")
-  (pprint selected)
   [$label
     {:label label
      :help help
@@ -166,8 +164,9 @@
         {:style {:margin-left 10}}
         "You need to verify your domain before you can connect a website to it"])]))
 
-(defn -$domain [{:keys [id]}]
+(defn -$domain []
   (let [d (-> @app-state :page/domain :domain)
+        id (:crux.db/id d)
         existing-domain? (-> d :crux.db/id nil? not)]
     [:div.box
       [:h1.title
@@ -264,35 +263,11 @@
          [:h3 "App State"]
          [:pre (with-out-str (pprint @app-state))]])]))
 
-;; (defn $domain [{:keys [id]}]
-;;   (r/create-class
-;;     {:reagent-render
-;;      (fn [props]
-;;        [-$domain props])
-;;      :component-did-update
-;;      (fn []
-;;        (println "commponent did update")
-;;        (pprint (:new-domain @app-state))
-;;        (when (-> @app-state :new-domain :domain/website-id)
-;;          (println "Fetching website versions")))
-;;      :component-did-mount
-;;      (fn []
-;;        (redirect-if-no-token!)
-;;        (fetch-domain-if-auth id)
-;;        (api/fetch-websites-if-auth)
-;;        (println "component did mount")
-;;        (pprint (:new-domain @app-state))
-;;        (when (-> @app-state :new-domain :domain/website-id)
-;;          (println "Fetching website versions")))
-;;      :component-will-unmount
-;;      (fn []
-;;        (swap! app-state assoc :new-domain {}))}))
-
 (defn $domain [{:keys [id]
                 :as opts}]
   ^{:key id}
   [component
-    {:to-render [-$domain opts]
+    {:to-render -$domain
      :namespace :page/domain
      :resources [[:websites]
                  [:domain id]]}])
