@@ -2,6 +2,9 @@
   "name": "frontend",
   "version": "0.0.1",
   "private": true,
+  "scripts": {
+    "test": "shadow-cljs compile ci && karma start --single-run"
+  },
   "devDependencies": {
     "bulma": "^0.9.0",
     "karma": "^5.2.3",
