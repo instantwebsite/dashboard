@@ -7,8 +7,8 @@
     [state :refer [app-state]]))
 
 (defn -extract [{{email :user} :identity
-                 {api :token/api
-                  plugin :token/plugin} :token}]
+                 {api :tokens/api
+                  plugin :tokens/plugin} :tokens}]
   {:email email
    :api api
    :plugin plugin})

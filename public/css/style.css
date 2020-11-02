@@ -91,5 +91,9 @@ a {
 @media (prefers-color-scheme: dark) {
   html, body {
     background-color: #444;
+    color: #FFF;
+  }
+  h1 {
+    color: #FFF;
   }
 }

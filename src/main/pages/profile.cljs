@@ -9,8 +9,8 @@
     [components.copy :refer [$copy]]))
 
 (defn -extract [{{email :user/email} :user
-                 {api :token/api
-                  plugin :token/plugin} :token}]
+                 {api :tokens/api
+                  plugin :tokens/plugin} :tokens}]
   {:email email
    :api api
    :plugin plugin})

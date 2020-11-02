@@ -24,7 +24,8 @@
   (.fetch
     js/window
     (str (:api config) path)
-    #js{:headers #js{"Authorization" (str "Token " access-token)}}))
+    #js{:headers #js{"Authorization" (str "Token " access-token)
+                     "Accept" "application/edn"}}))
 
 (defn catch-forbidden [err]
   (if (= (.-message err) "403")
@@ -108,7 +109,13 @@
     opts))
 
 (defn get-headers [opts]
-  {"Authorization" (str "Token " (access-token app-state))})
+  (merge
+    {"Authorization" (str "Token " (access-token app-state))
+     "Accept" "application/edn"
+     "Content-Type" "application/edn"}
+    (or
+      (:headers opts)
+      {})))
 
 (defn http [opts on-success on-failure]
   (go (let [params (get-params opts)
@@ -130,6 +137,10 @@
                       "] response status " (:status response)))
         (if (or (= (:status response) 200)
                 (= (:status response) 201))
+          (println "Parsing response")
+          (pprint response)
+          (pprint (:body response))
+          (pprint (parse-fn (:body response)))
           (on-success (parse-fn (:body response)))
           (if (= (:status response) 0)
             (on-failure "Failed to connect to server")
@@ -205,19 +216,26 @@
                            :text "New domain created"})))))))
 
 (defn delete-domain! [id]
-  (->
-    (.fetch
-      js/window
-      (str (:api config/config) (str "domains/" id))
-      #js{:headers #js{"Authorization" (str "Token " (access-token app-state))}
-          :method "DELETE"})
-    (.then (fn [res] (.text res)))
-    (.then (fn [body]
-             (read-string body)))
-    (.then (fn [domain]
-             (notify! {:type :warn
-                       :text "Domain was deleted!"})
-             (go-to-page app-state "/domains")))))
+  (http {:path (str "domains/" id)
+         :method :delete}
+        (fn [body]
+          (notify! {:type :warn
+                    :text "Domain was deleted!"})
+          (go-to-page app-state "/domains"))
+        (fn [err]
+          (notify! {:type :error
+                    :text (.toString err)}))))
+;; (defn delete-domain! [id]
+;;   (->
+;;     (.fetch
+;;       js/window
+;;       (str (:api config/config) (str "domains/" id))
+;;       #js{:headers #js{"Authorization" (str "Token " (access-token app-state))}
+;;           :method "DELETE"})
+;;     (.then (fn [res] (.text res)))
+;;     (.then (fn [body]
+;;              (read-string body)))
+;;     (.then (fn [domain]
 
 (defn verify-domain! [id on-success]
   (swap! app-state assoc :verifying-domain? true)

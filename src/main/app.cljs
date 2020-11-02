@@ -135,7 +135,7 @@
 (defn mount [el]
   (when (access-token?)
     (let [token (ls-get-token)]
-      (swap! app-state assoc :token token)
+      (swap! app-state assoc :tokens token)
       (api/get-me #(swap! app-state assoc :user (:user %)))))
   (router/setup-popstate-listener! app-state)
   (swap! app-state assoc :current-page (-> js/window

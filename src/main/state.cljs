@@ -3,9 +3,9 @@
     [reagent.core :as r]
     [ls :as ls]))
 
-(defonce app-state (r/atom {:token {:access nil
-                                    :api nil}
-                            :notificatinos '()
+(defonce app-state (r/atom {:tokens {:access nil
+                                     :api nil}
+                            :notifications '()
                             :debug? (or (ls/get :debug?) false)
                             :username nil
                             :websites #{}

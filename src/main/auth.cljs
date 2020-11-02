@@ -9,10 +9,7 @@
     [config :as config]))
 
 (defn access-token [state]
-  ;; (println "Getting access token from state")
-  ;; (pprint @state)
-  ;; (pprint (-> @state :token :token/api))
-  (-> @state :token :token/api))
+  (-> @state :tokens :tokens/api))
 
 (defn current-path []
   (.-pathname js/location))
@@ -39,14 +36,14 @@
   (ls-get "token"))
 
 (defn get-access-token []
-  (:token/api (ls-get-token)))
+  (:tokens/api (ls-get-token)))
 
 (defn access-token? []
   (not (empty? (get-access-token))))
 
 (defn reset-to-home! [state]
   (remove-access-token!)
-  (swap! state assoc :token {})
+  (swap! state assoc :tokens {})
   (swap! state assoc :username nil)
   (swap! state assoc :user nil)
   (.setTimeout
@@ -72,14 +69,25 @@
               (reset! submitting? false)
               (reset! submitted? true)))))
 
+(defn js-res->clj [res]
+  {:status (.-status res)
+   :statusText (.-statusText res)
+   :ok (.-ok res)})
+
 (defn get-token [email login-code cb]
   (-> (.fetch
         js/window
         (str (:api config/config) "login/email/" email "/code/" login-code)
-        #js{:method "POST"})
+        (clj->js {:method "POST"
+                  :headers {"Accept" "application/edn"}}))
       (.then
         (fn [res]
-          (.text res)))
+          (if (not= (.-status res) 200)
+            (cb (js-res->clj res) nil)
+            (.text res))))
       (.then
         (fn [text]
-          (cb (read-string text))))))
+          (cb nil (read-string text))))
+      (.catch
+        (fn [err]
+          (cb err nil)))))
