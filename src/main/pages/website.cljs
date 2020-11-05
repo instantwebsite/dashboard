@@ -173,7 +173,13 @@
              [$text-input
               {:onChange #(edit-website! :website/name %)
                :value (:website/name website)}]]]
-
+          [:div
+            {:style {:margin-top 30}}
+            [$input-group
+             [$label "Description"]
+             [$text-input
+              {:onChange #(edit-website! :website/description %)
+               :value (:website/description website)}]]]
           [:div
             {:style {:margin-top 30}}
             [$input-group
