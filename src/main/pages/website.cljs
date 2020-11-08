@@ -10,7 +10,9 @@
     [components.table :refer [$table $table-row]]
     [components.text-input :refer [$text-input]]
     [components.select :refer [$select]]
-    [api :refer [http]]
+    [api :refer [http
+                 delete-website!]]
+    [notify :refer [notify!]]
     [tick.alpha.api :as t]
     [tick.locale-en-us :as l]))
 
@@ -136,6 +138,17 @@
        :name (:page/title page)})
     pages))
 
+(defn handle-delete [website]
+  (fn [ev]
+    (.preventDefault ev)
+    (delete-website!
+      (:crux.db/id website)
+      (fn []
+        (notify! {:text "Website deleted!"})
+        (go-to-page app-state "/websites"))
+      (fn [err]
+        (notify! {:type :error
+                  :text (.toString err)})))))
 
 (defn -$website [{:keys [resources
                          reset-mutations
@@ -265,7 +278,8 @@
           "Download Latest Version"]]
        [:div
          [:a.button
-          {:style {:background-color "#E2674C"
+          {:onClick (handle-delete website)
+           :style {:background-color "#E2674C"
                    :border "none"
                    :color "white"}}
           "Delete"]]]]))

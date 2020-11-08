@@ -1,6 +1,7 @@
 (ns config)
 
 (def api-domain {:dev "http://localhost:8080/api/"
+                 ;; :dev "https://api.instantwebsite.app/" ;; < for quick debug
                  :production "https://api.instantwebsite.app/"})
 
 (def website-preview-domains

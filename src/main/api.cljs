@@ -20,12 +20,26 @@
 
   (read-string "{:id \"hello\"}"))
 
+(defn get-headers [opts]
+  (merge
+    {"Authorization" (str "Token " (access-token app-state))
+     "Accept" "application/edn"
+     "Content-Type" "application/edn"}
+    (or
+      (:headers opts)
+      {})))
+
+(defn get-headers-js
+  ([]
+   (get-headers-js {}))
+  ([opts]
+   (clj->js (get-headers opts))))
+
 (defn fetch-with-auth [path access-token]
   (.fetch
     js/window
     (str (:api config) path)
-    #js{:headers #js{"Authorization" (str "Token " access-token)
-                     "Accept" "application/edn"}}))
+    #js{:headers (get-headers-js)}))
 
 (defn catch-forbidden [err]
   (if (= (.-message err) "403")
@@ -65,7 +79,7 @@
       (.fetch
         js/window
         (str (:api config) "domains/" id)
-        #js{:headers #js{"Authorization" (str "Token " access-token)}})
+        #js{:headers (get-headers-js)})
       (.then (fn [res] (.text res)))
       (.then (fn [text] (callback (read-string text))))))
 
@@ -107,15 +121,6 @@
       {:edn-params (:edn opts)}
       {})
     opts))
-
-(defn get-headers [opts]
-  (merge
-    {"Authorization" (str "Token " (access-token app-state))
-     "Accept" "application/edn"
-     "Content-Type" "application/edn"}
-    (or
-      (:headers opts)
-      {})))
 
 (defn http [opts on-success on-failure]
   (go (let [params (get-params opts)
@@ -195,8 +200,7 @@
       (.fetch
         js/window
         (str (:api config/config) (:path d))
-        #js{:headers #js{"Authorization" (str "Token " (access-token app-state))
-                         "Content-Type" "application/edn"}
+        #js{:headers (get-headers-js)
             :method (:method d)
             :body (prn-str new-data)})
       (.then (fn [res] (.text res)))
@@ -254,7 +258,7 @@
     (.fetch
       js/window
       (str (:api config/config) (str "checkout-session"))
-      #js{:headers #js{"Authorization" (str "Token " (access-token app-state))}
+      #js{:headers (get-headers-js)
           :method "POST"})
     (.then (fn [res] (.text res)))
     (.then (fn [body]
@@ -265,7 +269,7 @@
     (.fetch
       js/window
       (str (:api config/config) (str "portal-session"))
-      #js{:headers #js{"Authorization" (str "Token " (access-token app-state))}
+      #js{:headers (get-headers-js)
           :method "POST"})
     (.then (fn [res] (.text res)))
     (.then (fn [body]
