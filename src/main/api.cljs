@@ -157,8 +157,7 @@
   (let [d (create-or-save new-data)]
     (http {:path (:path d)
            :method (:method d)
-           :edn new-data
-           :parse-fn read-string}
+           :edn new-data}
           (fn [body]
             (on-success body))
           (fn [body]
@@ -240,8 +239,7 @@
 (defn verify-domain! [id on-success]
   (swap! app-state assoc :verifying-domain? true)
   (http {:path (str "domains/" id "/verify")
-         :method :post
-         :parse-fn read-string}
+         :method :post}
         (fn [body]
           (swap! app-state assoc :verifying-domain? false)
           (swap! app-state assoc :tried-verifying-domain? true)
