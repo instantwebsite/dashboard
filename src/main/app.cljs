@@ -40,8 +40,8 @@
      "Your purchase was cancelled"]
    [:a.button.is-info
     {:href "/billing"
-     :onClick (ev-go-to-page app-state "/billing")}
-    "Go to Billing"]])
+     :onClick (ev-go-to-page app-state "/pricing")}
+    "Go back to Pricing"]])
 
 (def handlers
   {:home $home
