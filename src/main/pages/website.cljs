@@ -157,7 +157,8 @@
                          loading?
                          mutator]}]
   (let [website (:website resources)
-        user-pro? (= (-> @app-state :user :user/plan) :pro)
+        ;; user-pro? (= (-> @app-state :user :user/plan) :pro)
+        user-pro? true ;; temporarly make all users pro
         edit-website! (mutator :website)
         saving-website? (saving-mutation? :website)
         latest-version (-> @app-state
